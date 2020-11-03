@@ -1,0 +1,33 @@
+.container {
+  width: 100%;
+  max-width: 70vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 3rem;
+  margin: 3rem auto 0;
+  border: 1px solid rgb(153, 153, 153);
+  border-radius: 15px;
+}
+
+.image {
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+}
+
+.text{
+  /* margin: 1rem 3rem; */
+  padding: 0 2rem;
+}
+
+.name{
+  font-size: 1.4em;
+  font-weight: 600;
+  color: rgb(8, 8, 48);
+}
+
+.bio{
+  color: rgb(128, 128, 128);
+  font-size: 1.1em;
+}

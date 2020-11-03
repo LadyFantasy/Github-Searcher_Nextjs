@@ -1,65 +1,74 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import styles from "../styles/Home.module.css";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import { useState } from "react";
+import Presentation from "../components/Presentation";
+// import Projects from "../components/Projects";
+import Repo from "../components/Repo";
+import Link from "next/link";
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [data, setData] = useState({});
+  const [isFetching, setIsFetching] = useState(false)
+
+  function handleInput(value) {
+    setSearchQuery(value);
+  }
+
+  function handleKeyPress(e) {
+    if (e.key === "Enter") {
+      handleFetch();
+    }
+  }
+
+  async function handleFetch() {
+    
+    setIsFetching(true)
+    const github = await fetch(`https://api.github.com/users/${searchQuery}`);
+    const githubJson = await github.json();
+
+    const jsonBin = await fetch(`https://api.jsonbin.io/b/5f9ac4d49291173cbca55430/3`);
+    const jsonJson = await jsonBin.json();
+
+    const jsonUser = jsonJson.find(user => user.name === searchQuery);
+
+    setSearchQuery("");
+
+    setData({
+      github: githubJson,
+      json: jsonUser?.projects
+    });
+
+    setIsFetching(false)
+  }
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <main className={styles.container}>
+      <h3>Search your profile</h3>
+      <section className={styles.search}>
+        <Input
+          handleCallback={handleInput}
+          placeholder="Search your username..."
+          name="input"
+          value={searchQuery}
+          onKeyPress={handleKeyPress}
+        />
+        <Button handleCallback={handleFetch} name="button" value="Search" />
+      </section>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      {isFetching && <h3>Loading...</h3>}
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+      <Link href={`/${searchQuery}`}>
+        <div>{data.github && <Presentation data={data.github} />}</div>
+      </Link>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+      <section className={styles.repos}>
+        {data.json &&
+          data.json.map((repo, key) => {
+            return <Repo key={key} data={repo} />;
+          })}
+      </section>
+    </main>
+  );
 }
