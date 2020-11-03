@@ -10,10 +10,10 @@ import Link from "next/link";
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState({});
-  const [isFetching, setIsFetching] = useState(false)
+  const [isFetching, setIsFetching] = useState(false);
 
-  function handleInput(value) {
-    setSearchQuery(value);
+  function handleChange(e) {
+    setSearchQuery(e.target.value);
   }
 
   function handleKeyPress(e) {
@@ -23,8 +23,7 @@ export default function Home() {
   }
 
   async function handleFetch() {
-    
-    setIsFetching(true)
+    setIsFetching(true);
     const github = await fetch(`https://api.github.com/users/${searchQuery}`);
     const githubJson = await github.json();
 
@@ -33,14 +32,14 @@ export default function Home() {
 
     const jsonUser = jsonJson.find(user => user.name === searchQuery);
 
-    setSearchQuery("");
-
+    
     setData({
       github: githubJson,
       json: jsonUser?.projects
     });
 
-    setIsFetching(false)
+    setIsFetching(false);
+  
   }
 
   return (
@@ -48,10 +47,10 @@ export default function Home() {
       <h3>Search your profile</h3>
       <section className={styles.search}>
         <Input
-          handleCallback={handleInput}
           placeholder="Search your username..."
           name="input"
           value={searchQuery}
+          onChange={handleChange}
           onKeyPress={handleKeyPress}
         />
         <Button handleCallback={handleFetch} name="button" value="Search" />

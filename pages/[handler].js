@@ -4,7 +4,7 @@ import Repo from "../components/Repo";
 import { useRouter } from "next/router";
 
 export default function Handler({ user, repos }) {
-  console.log(repos);
+ 
   const router = useRouter();
   return (
     <main className={Styles.container}>
@@ -26,6 +26,7 @@ export default function Handler({ user, repos }) {
 export async function getStaticPaths() {
   return { paths: [], fallback: true };
 }
+
 export async function getStaticProps({ params }) {
   console.log("params", params);
 

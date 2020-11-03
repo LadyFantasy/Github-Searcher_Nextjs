@@ -1,4 +1,5 @@
 .container {
+  cursor: pointer;
   width: 100%;
   max-width: 70vw;
   display: flex;
